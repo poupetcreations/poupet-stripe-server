@@ -3,3 +3,8 @@
     "buildCommand": "npm install --omit=dev"
   }
 }
+{
+ "deploy": {
+ "startCommand": "node serveur.js"
+ }
+}

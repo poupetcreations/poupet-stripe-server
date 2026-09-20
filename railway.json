@@ -1,5 +1,9 @@
 {
   "build": {
-    "buildCommand": "npm install --omit=dev"
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "node server.js",
+    "restartPolicyType": "ON_FAILURE"
   }
 }

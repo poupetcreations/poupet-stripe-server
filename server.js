@@ -18,6 +18,21 @@ const eur = (n) => Math.round(n * 100) / 100;
 
 // ---------- Catalogue : relu sur le site toutes les 5 minutes ----------
 const CATALOGUE_URL = process.env.CATALOGUE_URL || 'https://poupetcreations.fr/catalogue-paiement.json';
+const LIVRAISON_URL = CATALOGUE_URL.replace('catalogue-paiement.json', 'livraison-paiement.json');
+let REGLES = { autres: { tarif: 7.9, seuil_gratuit: 80 }, petits_objets: 7.9, sacs: 7.9, petit_luminaire: 20, grand_luminaire: 50, seuil_grand_luminaire: 140, pays: ['FR'] };
+async function rafraichirLivraison() {
+  try {
+    const r = await fetch(LIVRAISON_URL + '?t=' + Date.now(), { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const ok = d && d.autres && [d.autres.tarif, d.autres.seuil_gratuit, d.petits_objets, d.sacs, d.petit_luminaire, d.grand_luminaire, d.seuil_grand_luminaire].every(n => Number.isFinite(Number(n)) && Number(n) >= 0) && Array.isArray(d.pays) && d.pays.length;
+    if (!ok) throw new Error('règles de livraison invalides, ignorées');
+    REGLES = d;
+    console.log('Règles de livraison mises à jour');
+  } catch (err) {
+    console.error('Règles de livraison non mises à jour :', err.message);
+  }
+}
 let catalogueMaj = null; // date de la dernière lecture réussie
 async function rafraichirCatalogue() {
   try {
@@ -77,10 +92,11 @@ app.get('/session-status', async (req, res) => {
 // ---------- Livraison : mêmes règles que le panier ----------
 function calculerLivraison(lignes, sousTotal) {
   const lum = lignes.filter(l => l.category === 'luminaires');
-  if (lum.length) return lum.some(l => l.price > 140) ? 50 : 20;
+  if (lum.length) return lum.some(l => l.price > REGLES.seuil_grand_luminaire) ? REGLES.grand_luminaire : REGLES.petit_luminaire;
   const petits = ['obj-13','obj-14','obj-15','obj-16','obj-17','obj-18','obj-19','obj-20','obj-21'];
-  if (lignes.some(l => l.category === 'sacs' || petits.includes(l.id))) return 7.9;
-  return 0; // autres produits : pas de frais de port
+  if (lignes.some(l => l.category === 'sacs')) return REGLES.sacs;
+  if (lignes.some(l => petits.includes(l.id))) return REGLES.petits_objets;
+  return sousTotal >= REGLES.autres.seuil_gratuit ? 0 : REGLES.autres.tarif; // offerte au-dessus du seuil
 }
 
 // ---------- Code promo : relu dans la base à chaque paiement ----------
@@ -143,7 +159,7 @@ app.post('/create-checkout-session', async (req, res) => {
       success_url: `${site}/?page=thank-you&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${site}/?paiement=annule`,
       billing_address_collection: 'required',
-      shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU'] },
+      shipping_address_collection: { allowed_countries: REGLES.pays },
       locale: 'fr',
       metadata: { code_promo: codeValide || '', livraison: String(livraison), panier: lignes.map(l => `${l.id}x${l.qty}`).join(',').slice(0, 480) },
     };
@@ -192,4 +208,5 @@ async function lireCodeBrut(code) {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('Serveur Poupet v3 démarré sur le port ' + PORT));
 rafraichirCatalogue();
-setInterval(rafraichirCatalogue, 5 * 60 * 1000);
+rafraichirLivraison();
+setInterval(() => { rafraichirCatalogue(); rafraichirLivraison(); }, 5 * 60 * 1000);

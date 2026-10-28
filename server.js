@@ -1,10 +1,10 @@
-// Serveur de paiement Poupet Créations — version 2
+// Serveur de paiement Poupet Créations — version 3 (catalogue relu automatiquement sur le site)
 // Variables Railway : STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, SITE_URL, PB_URL, PB_CLE
 const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 const Stripe = require('stripe');
-const catalog = require('./catalog.json');
+let catalog = require('./catalog.json'); // catalogue de secours, remplacé par celui du site dès qu'il est lu
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const SITES = (process.env.SITE_URL || 'https://poupetcreations.fr,https://www.poupetcreations.fr')
@@ -15,6 +15,25 @@ const PB_URL = (process.env.PB_URL || 'https://poupetcreations.fr/.sfs-be').repl
 const PB_CLE = process.env.PB_CLE || '';
 const MIN_RATIO = Number(process.env.MIN_RATIO || 0.6); // garde-fou : prix payé >= 60 % du prix catalogue
 const eur = (n) => Math.round(n * 100) / 100;
+
+// ---------- Catalogue : relu sur le site toutes les 5 minutes ----------
+const CATALOGUE_URL = process.env.CATALOGUE_URL || 'https://poupetcreations.fr/catalogue-paiement.json';
+let catalogueMaj = null; // date de la dernière lecture réussie
+async function rafraichirCatalogue() {
+  try {
+    const r = await fetch(CATALOGUE_URL + '?t=' + Date.now(), { signal: AbortSignal.timeout(8000) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    const ids = Object.keys(data || {});
+    const valide = ids.length >= 30 && ids.every(id => data[id] && Number(data[id].price) > 0 && typeof data[id].category === 'string');
+    if (!valide) throw new Error('catalogue reçu incomplet, ignoré');
+    catalog = data;
+    catalogueMaj = new Date().toISOString();
+    console.log('Catalogue mis à jour :', ids.length, 'produits');
+  } catch (err) {
+    console.error('Catalogue non mis à jour (on garde le précédent) :', err.message);
+  }
+}
 
 const app = express();
 app.use(cors({ origin: (o, cb) => cb(null, !o || SITES.includes(o)) }));
@@ -42,8 +61,8 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 
 app.use(express.json({ limit: '100kb' }));
 
-app.get('/', (req, res) => res.json({ status: 'ok', message: 'Poupet Stripe Server', version: 2 }));
-app.get('/health', (req, res) => res.json({ status: 'ok', version: 2 }));
+app.get('/', (req, res) => res.json({ status: 'ok', message: 'Poupet Stripe Server', version: 3 }));
+app.get('/health', (req, res) => res.json({ status: 'ok', version: 3, produits: Object.keys(catalog).length, catalogue_maj: catalogueMaj }));
 
 // ---------- Vérification d'un paiement (page « Merci ») ----------
 app.get('/session-status', async (req, res) => {
@@ -98,7 +117,7 @@ app.post('/create-checkout-session', async (req, res) => {
       if (!Number.isFinite(prix) || prix < eur(ref.price * MIN_RATIO) || prix > ref.price * 5) {
         return res.status(400).json({ error: 'Prix incohérent pour ' + String(it.name || it.id).slice(0, 60) });
       }
-      lignes.push({ id: it.id, category: ref.category, price: eur(prix), qty, name: String(it.name || ref.id).slice(0, 120),
+      lignes.push({ id: it.id, category: ref.category, price: eur(prix), qty, name: String(it.name || it.id).slice(0, 120),
         img: typeof it.img === 'string' && it.img.startsWith('https://') ? it.img : undefined,
         description: String(it.description || '').slice(0, 480) });
     }
@@ -171,4 +190,6 @@ async function lireCodeBrut(code) {
 }
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Serveur Poupet v2 démarré sur le port ' + PORT));
+app.listen(PORT, () => console.log('Serveur Poupet v3 démarré sur le port ' + PORT));
+rafraichirCatalogue();
+setInterval(rafraichirCatalogue, 5 * 60 * 1000);

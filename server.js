@@ -1,10 +1,10 @@
-// Serveur de paiement Poupet Créations — version 3 (catalogue relu automatiquement sur le site)
+// Serveur de paiement Poupet CrÃ©ations â€” version 4 (adresse et tÃ©lÃ©phone enregistrÃ©s, catalogue relu automatiquement sur le site)
 // Variables Railway : STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, SITE_URL, PB_URL, PB_CLE
 const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 const Stripe = require('stripe');
-let catalog = require('./catalog.json'); // catalogue de secours, remplacé par celui du site dès qu'il est lu
+let catalog = require('./catalog.json'); // catalogue de secours, remplacÃ© par celui du site dÃ¨s qu'il est lu
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const SITES = (process.env.SITE_URL || 'https://poupetcreations.fr,https://www.poupetcreations.fr')
@@ -13,7 +13,7 @@ if (!SITES.includes('https://poupetcreations.fr')) SITES.push('https://poupetcre
 if (!SITES.includes('https://www.poupetcreations.fr')) SITES.push('https://www.poupetcreations.fr');
 const PB_URL = (process.env.PB_URL || 'https://poupetcreations.fr/.sfs-be').replace(/\/$/, '');
 const PB_CLE = process.env.PB_CLE || '';
-const MIN_RATIO = Number(process.env.MIN_RATIO || 0.6); // garde-fou : prix payé >= 60 % du prix catalogue
+const MIN_RATIO = Number(process.env.MIN_RATIO || 0.6); // garde-fou : prix payÃ© >= 60 % du prix catalogue
 const eur = (n) => Math.round(n * 100) / 100;
 
 // ---------- Catalogue : relu sur le site toutes les 5 minutes ----------
@@ -26,14 +26,14 @@ async function rafraichirLivraison() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
     const ok = d && d.autres && [d.autres.tarif, d.autres.seuil_gratuit, d.petits_objets, d.sacs, d.petit_luminaire, d.grand_luminaire, d.seuil_grand_luminaire].every(n => Number.isFinite(Number(n)) && Number(n) >= 0) && Array.isArray(d.pays) && d.pays.length;
-    if (!ok) throw new Error('règles de livraison invalides, ignorées');
+    if (!ok) throw new Error('rÃ¨gles de livraison invalides, ignorÃ©es');
     REGLES = d;
-    console.log('Règles de livraison mises à jour');
+    console.log('RÃ¨gles de livraison mises Ã  jour');
   } catch (err) {
-    console.error('Règles de livraison non mises à jour :', err.message);
+    console.error('RÃ¨gles de livraison non mises Ã  jour :', err.message);
   }
 }
-let catalogueMaj = null; // date de la dernière lecture réussie
+let catalogueMaj = null; // date de la derniÃ¨re lecture rÃ©ussie
 async function rafraichirCatalogue() {
   try {
     const r = await fetch(CATALOGUE_URL + '?t=' + Date.now(), { signal: AbortSignal.timeout(8000) });
@@ -41,12 +41,12 @@ async function rafraichirCatalogue() {
     const data = await r.json();
     const ids = Object.keys(data || {});
     const valide = ids.length >= 30 && ids.every(id => data[id] && Number(data[id].price) > 0 && typeof data[id].category === 'string');
-    if (!valide) throw new Error('catalogue reçu incomplet, ignoré');
+    if (!valide) throw new Error('catalogue reÃ§u incomplet, ignorÃ©');
     catalog = data;
     catalogueMaj = new Date().toISOString();
-    console.log('Catalogue mis à jour :', ids.length, 'produits');
+    console.log('Catalogue mis Ã  jour :', ids.length, 'produits');
   } catch (err) {
-    console.error('Catalogue non mis à jour (on garde le précédent) :', err.message);
+    console.error('Catalogue non mis Ã  jour (on garde le prÃ©cÃ©dent) :', err.message);
   }
 }
 
@@ -70,16 +70,16 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     res.json({ received: true });
   } catch (err) {
     console.error('Webhook erreur:', err.message);
-    res.status(500).json({ error: 'À rejouer' }); // Stripe réessaiera
+    res.status(500).json({ error: 'Ã€ rejouer' }); // Stripe rÃ©essaiera
   }
 });
 
 app.use(express.json({ limit: '100kb' }));
 
-app.get('/', (req, res) => res.json({ status: 'ok', message: 'Poupet Stripe Server', version: 3 }));
-app.get('/health', (req, res) => res.json({ status: 'ok', version: 3, produits: Object.keys(catalog).length, catalogue_maj: catalogueMaj }));
+app.get('/', (req, res) => res.json({ status: 'ok', message: 'Poupet Stripe Server', version: 4 }));
+app.get('/health', (req, res) => res.json({ status: 'ok', version: 4, produits: Object.keys(catalog).length, catalogue_maj: catalogueMaj }));
 
-// ---------- Vérification d'un paiement (page « Merci ») ----------
+// ---------- VÃ©rification d'un paiement (page Â« Merci Â») ----------
 app.get('/session-status', async (req, res) => {
   try {
     const id = String(req.query.id || '');
@@ -89,7 +89,7 @@ app.get('/session-status', async (req, res) => {
   } catch (err) { res.status(404).json({ paid: false }); }
 });
 
-// ---------- Livraison : mêmes règles que le panier ----------
+// ---------- Livraison : mÃªmes rÃ¨gles que le panier ----------
 function calculerLivraison(lignes, sousTotal) {
   const lum = lignes.filter(l => l.category === 'luminaires');
   if (lum.length) return lum.some(l => l.price > REGLES.seuil_grand_luminaire) ? REGLES.grand_luminaire : REGLES.petit_luminaire;
@@ -99,7 +99,7 @@ function calculerLivraison(lignes, sousTotal) {
   return sousTotal >= REGLES.autres.seuil_gratuit ? 0 : REGLES.autres.tarif; // offerte au-dessus du seuil
 }
 
-// ---------- Code promo : relu dans la base à chaque paiement ----------
+// ---------- Code promo : relu dans la base Ã  chaque paiement ----------
 async function lireCode(code) {
   const c = String(code).toUpperCase().replace(/[^A-Z0-9_-]/g, '');
   const q = new URLSearchParams({ filter: `code = "${c}"`, code: c, perPage: '1' });
@@ -114,13 +114,13 @@ async function lireCode(code) {
   return rec;
 }
 
-// ---------- Création de la page de paiement ----------
+// ---------- CrÃ©ation de la page de paiement ----------
 app.post('/create-checkout-session', async (req, res) => {
   try {
     const { items, code, siteUrl } = req.body || {};
     const origin = req.headers.origin;
     const site = SITES.includes(origin) ? origin : SITES.includes(String(siteUrl || '').replace(/\/$/, '')) ? String(siteUrl).replace(/\/$/, '') : null;
-    if (!site) return res.status(403).json({ error: 'Adresse non autorisée' });
+    if (!site) return res.status(403).json({ error: 'Adresse non autorisÃ©e' });
     if (!Array.isArray(items) || !items.length || items.length > 40) return res.status(400).json({ error: 'Panier invalide' });
 
     const lignes = [];
@@ -129,9 +129,9 @@ app.post('/create-checkout-session', async (req, res) => {
       const qty = Number(it.qty);
       const prix = Number(it.price);
       if (!ref) return res.status(400).json({ error: `Produit indisponible au paiement direct : ${String(it.name || it.id).slice(0, 60)}` });
-      if (!Number.isInteger(qty) || qty < 1 || qty > 50) return res.status(400).json({ error: 'Quantité invalide' });
+      if (!Number.isInteger(qty) || qty < 1 || qty > 50) return res.status(400).json({ error: 'QuantitÃ© invalide' });
       if (!Number.isFinite(prix) || prix < eur(ref.price * MIN_RATIO) || prix > ref.price * 5) {
-        return res.status(400).json({ error: 'Prix incohérent pour ' + String(it.name || it.id).slice(0, 60) });
+        return res.status(400).json({ error: 'Prix incohÃ©rent pour ' + String(it.name || it.id).slice(0, 60) });
       }
       lignes.push({ id: it.id, category: ref.category, price: eur(prix), qty, name: String(it.name || it.id).slice(0, 120),
         img: typeof it.img === 'string' && it.img.startsWith('https://') ? it.img : undefined,
@@ -142,7 +142,7 @@ app.post('/create-checkout-session', async (req, res) => {
     let remise = 0, codeValide = null;
     if (code) {
       const rec = await lireCode(code);
-      if (!rec) return res.status(400).json({ error: 'Ce code n’est plus valable.' });
+      if (!rec) return res.status(400).json({ error: 'Ce code nâ€™est plus valable.' });
       if (rec.montant_minimum > 0 && sousTotal < rec.montant_minimum) return res.status(400).json({ error: 'Montant minimum non atteint pour ce code.' });
       remise = rec.type === 'pourcentage' ? eur(sousTotal * rec.valeur / 100) : Math.min(rec.valeur, sousTotal);
       codeValide = rec.code;
@@ -160,6 +160,7 @@ app.post('/create-checkout-session', async (req, res) => {
       cancel_url: `${site}/?paiement=annule`,
       billing_address_collection: 'required',
       shipping_address_collection: { allowed_countries: REGLES.pays },
+      phone_number_collection: { enabled: true },
       locale: 'fr',
       metadata: { code_promo: codeValide || '', livraison: String(livraison), panier: lignes.map(l => `${l.id}x${l.qty}`).join(',').slice(0, 480) },
     };
@@ -175,21 +176,36 @@ app.post('/create-checkout-session', async (req, res) => {
     res.json({ url: session.url });
   } catch (err) {
     console.error('Stripe error:', err.message);
-    res.status(500).json({ error: 'Paiement indisponible, réessayez.' });
+    res.status(500).json({ error: 'Paiement indisponible, rÃ©essayez.' });
   }
 });
 
-// ---------- Commande enregistrée seulement une fois payée ----------
+// ---------- Commande enregistrÃ©e seulement une fois payÃ©e ----------
+function formaterAdresse(s) {
+  const sd = (s.collected_information && s.collected_information.shipping_details) || s.shipping_details || null;
+  const ad = (sd && sd.address) || (s.customer_details && s.customer_details.address) || null;
+  if (!ad) return '';
+  const nom = (sd && sd.name) || (s.customer_details && s.customer_details.name) || '';
+  return [nom, ad.line1, ad.line2, [ad.postal_code, ad.city].filter(Boolean).join(' '), ad.country].filter(Boolean).join('\n');
+}
+async function lignesLisibles(s) {
+  try {
+    const li = await stripe.checkout.sessions.listLineItems(s.id, { limit: 100 });
+    return li.data.map(l => `${l.quantity} x ${l.description} (${((l.amount_total || 0) / 100).toFixed(2).replace('.', ',')} EUR)`).join(' | ');
+  } catch (e) { return ''; }
+}
 async function enregistrerCommande(s) {
   const enc = { 'Content-Type': 'application/json' };
+  const lisible = await lignesLisibles(s);
   const r = await fetch(`${PB_URL}/api/collections/paiements_stripe/records`, { method: 'POST', headers: enc, body: JSON.stringify({
     id: crypto.createHash('sha1').update(s.id).digest('hex').slice(0, 15), session: s.id, statut: 'payee', montant: (s.amount_total || 0) / 100,
     email: s.customer_details && s.customer_details.email || '', nom: s.customer_details && s.customer_details.name || '',
+    telephone: s.customer_details && s.customer_details.phone || '', adresse: formaterAdresse(s),
     code_promo: s.metadata && s.metadata.code_promo || '', livraison: Number(s.metadata && s.metadata.livraison || 0),
-    details: (s.metadata && s.metadata.panier || '').slice(0, 900), cle: PB_CLE }) });
+    details: (lisible || (s.metadata && s.metadata.panier) || '').slice(0, 1800), cle: PB_CLE }) });
   if (!r.ok) {
     const txt = await r.text();
-    if (/unique|already|exists/i.test(txt)) return; // déjà enregistrée
+    if (/unique|already|exists/i.test(txt)) return; // dÃ©jÃ  enregistrÃ©e
     throw new Error('Enregistrement impossible : ' + r.status);
   }
   const code = s.metadata && s.metadata.code_promo;
@@ -206,7 +222,7 @@ async function lireCodeBrut(code) {
 }
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Serveur Poupet v3 démarré sur le port ' + PORT));
+app.listen(PORT, () => console.log('Serveur Poupet v4 dÃ©marrÃ© sur le port ' + PORT));
 rafraichirCatalogue();
 rafraichirLivraison();
 setInterval(() => { rafraichirCatalogue(); rafraichirLivraison(); }, 5 * 60 * 1000);

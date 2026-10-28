@@ -1,0 +1,454 @@
+{
+ "lum-1": {
+  "price": 85,
+  "category": "luminaires"
+ },
+ "lum-2": {
+  "price": 75,
+  "category": "luminaires"
+ },
+ "lum-3": {
+  "price": 210,
+  "category": "luminaires"
+ },
+ "lum-4": {
+  "price": 85,
+  "category": "luminaires"
+ },
+ "lum-5": {
+  "price": 80,
+  "category": "luminaires"
+ },
+ "lum-6": {
+  "price": 71,
+  "category": "luminaires"
+ },
+ "lum-7": {
+  "price": 60,
+  "category": "luminaires"
+ },
+ "lum-8": {
+  "price": 220,
+  "category": "luminaires"
+ },
+ "lum-9": {
+  "price": 190,
+  "category": "luminaires"
+ },
+ "lum-10": {
+  "price": 210,
+  "category": "luminaires"
+ },
+ "lum-11": {
+  "price": 240,
+  "category": "luminaires"
+ },
+ "lum-12": {
+  "price": 450,
+  "category": "luminaires"
+ },
+ "lum-13": {
+  "price": 200,
+  "category": "luminaires"
+ },
+ "lum-14": {
+  "price": 280,
+  "category": "luminaires"
+ },
+ "lum-15": {
+  "price": 180,
+  "category": "luminaires"
+ },
+ "lum-17": {
+  "price": 150,
+  "category": "luminaires"
+ },
+ "lum-18": {
+  "price": 220,
+  "category": "luminaires"
+ },
+ "lum-19": {
+  "price": 150,
+  "category": "luminaires"
+ },
+ "lum-20": {
+  "price": 95,
+  "category": "luminaires"
+ },
+ "lum-21": {
+  "price": 150,
+  "category": "luminaires"
+ },
+ "lum-22": {
+  "price": 250,
+  "category": "luminaires"
+ },
+ "lum-23": {
+  "price": 150,
+  "category": "luminaires"
+ },
+ "lum-24": {
+  "price": 90,
+  "category": "luminaires"
+ },
+ "lum-25": {
+  "price": 80,
+  "category": "luminaires"
+ },
+ "lum-27": {
+  "price": 168,
+  "category": "luminaires"
+ },
+ "lum-30": {
+  "price": 95,
+  "category": "luminaires"
+ },
+ "lum-31": {
+  "price": 90,
+  "category": "luminaires"
+ },
+ "lum-28": {
+  "price": 95,
+  "category": "luminaires"
+ },
+ "lum-32": {
+  "price": 85,
+  "category": "luminaires"
+ },
+ "lum-29": {
+  "price": 85,
+  "category": "luminaires"
+ },
+ "lum-26": {
+  "price": 80,
+  "category": "luminaires"
+ },
+ "sac-1": {
+  "price": 70,
+  "category": "sacs"
+ },
+ "sac-2": {
+  "price": 70,
+  "category": "sacs"
+ },
+ "sac-3": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-4": {
+  "price": 67,
+  "category": "sacs"
+ },
+ "sac-5": {
+  "price": 70,
+  "category": "sacs"
+ },
+ "sac-6": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-7": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-8": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-9": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-10": {
+  "price": 77,
+  "category": "sacs"
+ },
+ "sac-11": {
+  "price": 55,
+  "category": "sacs"
+ },
+ "sac-12": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-13": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-14": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-15": {
+  "price": 50,
+  "category": "sacs"
+ },
+ "sac-16": {
+  "price": 65,
+  "category": "sacs"
+ },
+ "sac-17": {
+  "price": 70,
+  "category": "sacs"
+ },
+ "obj-1": {
+  "price": 35,
+  "category": "objets"
+ },
+ "obj-2": {
+  "price": 37,
+  "category": "objets"
+ },
+ "obj-2b": {
+  "price": 70,
+  "category": "objets"
+ },
+ "obj-3": {
+  "price": 35,
+  "category": "objets"
+ },
+ "obj-4": {
+  "price": 38,
+  "category": "objets"
+ },
+ "obj-4b": {
+  "price": 48,
+  "category": "objets"
+ },
+ "obj-5": {
+  "price": 30,
+  "category": "objets"
+ },
+ "obj-5b": {
+  "price": 68,
+  "category": "objets"
+ },
+ "obj-5c": {
+  "price": 70,
+  "category": "objets"
+ },
+ "obj-7": {
+  "price": 42,
+  "category": "objets"
+ },
+ "obj-8": {
+  "price": 47,
+  "category": "objets"
+ },
+ "obj-9": {
+  "price": 42,
+  "category": "objets"
+ },
+ "obj-10": {
+  "price": 55,
+  "category": "objets"
+ },
+ "obj-11b": {
+  "price": 58,
+  "category": "objets"
+ },
+ "obj-11c": {
+  "price": 40,
+  "category": "objets"
+ },
+ "obj-12": {
+  "price": 22,
+  "category": "objets"
+ },
+ "obj-13": {
+  "price": 4,
+  "category": "objets"
+ },
+ "obj-16": {
+  "price": 50,
+  "category": "objets"
+ },
+ "obj-17": {
+  "price": 38,
+  "category": "objets"
+ },
+ "obj-18": {
+  "price": 38,
+  "category": "objets"
+ },
+ "obj-19": {
+  "price": 38,
+  "category": "objets"
+ },
+ "obj-20": {
+  "price": 38,
+  "category": "objets"
+ },
+ "obj-21": {
+  "price": 38,
+  "category": "objets"
+ },
+ "obj-14": {
+  "price": 50,
+  "category": "objets"
+ },
+ "obj-apero": {
+  "price": 35,
+  "category": "objets"
+ },
+ "obj-derouleur": {
+  "price": 25,
+  "category": "objets"
+ },
+ "ver-12": {
+  "price": 28,
+  "category": "verrerie"
+ },
+ "ver-14": {
+  "price": 32,
+  "category": "verrerie"
+ },
+ "jdr-1": {
+  "price": 42,
+  "category": "jdr"
+ },
+ "jdr-2": {
+  "price": 39.5,
+  "category": "jdr"
+ },
+ "jdr-3": {
+  "price": 9.95,
+  "category": "jdr"
+ },
+ "jdr-4": {
+  "price": 200,
+  "category": "jdr"
+ },
+ "bou-26": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-25": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-24": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-23": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-22": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-21": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-20": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-19": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-18": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-17": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-16": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-15": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-14": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-13": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-12": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-11": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-10": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-9": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-8": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-7": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-6": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-5": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "bou-4": {
+  "price": 20,
+  "category": "boucles"
+ },
+ "noel-1": {
+  "price": 9.9,
+  "category": "noel"
+ },
+ "noel-2": {
+  "price": 9.9,
+  "category": "noel"
+ },
+ "noel-3": {
+  "price": 28,
+  "category": "noel"
+ },
+ "noel-5": {
+  "price": 9.9,
+  "category": "noel"
+ },
+ "noel-6": {
+  "price": 9.9,
+  "category": "noel"
+ },
+ "noel-7": {
+  "price": 5,
+  "category": "noel"
+ },
+ "noel-8": {
+  "price": 9.9,
+  "category": "noel"
+ },
+ "noel-10": {
+  "price": 10,
+  "category": "noel"
+ },
+ "noel-11": {
+  "price": 9.9,
+  "category": "noel"
+ },
+ "noel-9": {
+  "price": 13,
+  "category": "noel"
+ }
+}
